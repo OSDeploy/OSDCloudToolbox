@@ -1,4 +1,2 @@
-**Out of Box Experience**
-Start-OSDeployPad OOBE
-
-These scripts should be run in OOBE
+This is the OSDCloud Toolbox for OOBE
+https://github.com/OSDeploy/Toolbox/OOBE
