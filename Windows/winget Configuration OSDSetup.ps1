@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
  
-.VERSION 0.1.0
+.VERSION 0.1.1
  
 .GUID 15e9590a-5cf6-491e-93ea-95814d90e317
  
@@ -25,6 +25,7 @@
  
 .RELEASENOTES
 v0.1.0 - 2023may26 initial release 
+v0.1.1 - 2023may26 add some comments and change the name of the script - OSDSetup.ps1
  
 
 #>
@@ -515,11 +516,11 @@ if ((test-path  -path $Path) -eq $true)
     try {
         $originalsetting = "C:\Users\$ENV:USERNAME\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\settings.json"
 
-        Write-Host -ForegroundColor DarkCyan  "search file $originalsetting"
-        Write-Host -ForegroundColor DarkGray "Create Backup : settings.json to settingsbackup.json"
+      #  Write-Host -ForegroundColor DarkCyan  "search file $originalsetting"
+      #  Write-Host -ForegroundColor DarkGray "Create Backup : settings.json to settingsbackup.json"
 
-       write-host " Copy-Item  $originalsetting -Destination "$Path\Settingbackup.json" "
-       Copy-Item  $originalsetting -Destination "$Path\Settingbackup.json" -ErrorAction SilentlyContinue
+      #  Copy-Item  $originalsetting -Destination "$Path\Settingsbackup.json" 
+    
     }
     catch {
 
@@ -541,7 +542,7 @@ $json =@'
       },
 }
 '@
-$json | Out-File "$Path`settings.json" -Encoding ascii -Force
+$json | Out-File "$Path\settings.json" -Encoding ascii -Force
 $fileyaml=
 @'
 # yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
