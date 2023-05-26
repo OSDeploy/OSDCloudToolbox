@@ -509,17 +509,17 @@ if (Confirm-WinGet) {
 }
 
 $info = winget show
-$Path = "C:\Users\$env:Username\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
+$Path = "C:\Users\$env:Username\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\"
 if ((test-path  -path $Path) -eq $true)
 {
     try {
         $originalsetting = "C:\Users\$ENV:USERNAME\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\settings.json"
 
         Write-Host -ForegroundColor DarkCyan  "search file $originalsetting"
-        Write-Host -ForegroundColor DarkGray "Create Backup : settings.json to settingsbackup.json"
+        Write-Host -ForegroundColor DarkGray "Create Backup : settings.json to settingsoriginal.json"
 
-       write-host " Copy-Item  $originalsetting -Destination "$Path\Settingbackup.json" "
-       Copy-Item  $originalsetting -Destination "$Path\Settingbackup.json" -ErrorAction SilentlyContinue
+        Copy-Item  $originalsetting -Destination "$Path`Settingsoriginal.json" 
+    
     }
     catch {
 
