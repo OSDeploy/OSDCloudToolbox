@@ -568,8 +568,6 @@ properties:
         id: Microsoft.VisualStudioCode
         source: winget
         ensure: present
-        scope: machine
-        override: true
     - resource: WinGetPackage
       id: ADK_Package
       directives:
