@@ -614,8 +614,21 @@ Write-Host -ForegroundColor DarkCyan "Starting installation of Git, Visual Studi
 
 winget configure .\osdsetup.yaml ---disable-interactivity --accept-configuration-agreements
 
+Start-Sleep -Seconds 2
+
+Write-Host -ForegroundColor DarkCyan "Starting Workflow OSDCloud"
+
+New-OSDCloudTemplate 
+New-OSDCloudWorkspace -WorkspacePath C:\OSDCloud
+Edit-OSDCloudWinPE -CloudDriver * -UseDefaultWallpaper
+
+Write-Host -ForegroundColor DarkCyan "You ate ready for OSDCloud"
+
+
 }
 else
 {
     Write-Host "settings.json not found"
 }
+
+
