@@ -37,7 +37,8 @@ if ((Get-TPM).TpmPresent -eq $true -and (Get-TPM).TpmReady -eq $true) {
     $vm | Enable-VMTPM
 }
 
-Set-VMVideo -VMName $vmName -ResolutionType Single -HorizontalResolution 1280 -VerticalResolution 800
+# This breaks Set-DisRes in WinPE
+#Set-VMVideo -VMName $vmName -ResolutionType Single -HorizontalResolution 1280 -VerticalResolution 800
 
 # Checkpoint and Snapshot
 $vm | Set-VM -AutomaticCheckpointsEnabled $false
