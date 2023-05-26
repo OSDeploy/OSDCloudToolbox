@@ -1,21 +1,19 @@
 
 <#PSScriptInfo
  
-.VERSION 1.0.5
+.VERSION 0.1.0
  
-.GUID d860203a-bf1c-4477-aa2d-945981b9834e
+.GUID 15e9590a-5cf6-491e-93ea-95814d90e317
  
-.AUTHOR shfritz@microsoft.com
+.AUTHOR Jérôme Bezet-Torres @JM2K69 https://twitter.com/JM2K69
  
-.COMPANYNAME Microsoft
+.COMPANYNAME 
  
 .COPYRIGHT
  
 .TAGS
  
 .LICENSEURI
- 
-.PROJECTURI https://mrshannon.wordpress.com/
  
 .ICONURI
  
@@ -26,12 +24,7 @@
 .EXTERNALSCRIPTDEPENDENCIES
  
 .RELEASENOTES
-v1.0.5 - 2023jan30 Changed pattern matches for Microsoft.DesktopAppInstaller files on GitHub
-v1.0.4 - 2022jul29 Added a File Hash Integrity check of the DesktopAppInstaller/WinGet Package
-v1.0.3 - 2022jul26 Set min/max versions of UI.Xaml to use 2.7.x to prevent 2.8 from being installed
-v1.0.2 - 2022jul11 Changed Minimum Version for VCLibs from 14.0.30035.0 to 14.0.30704.0
-v1.0.1 - 2022ju105 Provisioned the DesktopAppInstaller with xml licnese
-v1.0.0 - 2022ju101 initial release
+v0.1.0 - 2023may26 initial release 
  
 
 #>
@@ -52,7 +45,7 @@ $isElevated = ([Security.Principal.WindowsPrincipal] [Security.Principal.Windows
 if ($isElevated) { Write-Output "Running as $whoiam and IS Elevated"; } else { Write-Warning "Running as $whoiam and is NOT Elevated"; }
 
 ### ---
-
+### Functions Insprited from Powershell Script Inport-Quickassist.ps1
 function Get-InstalledVersion {
     [CmdletBinding()]
     [OutputType([String])]
@@ -146,7 +139,6 @@ function Get-InstalledVersion {
         }
     }
 }
-
 function Confirm-NuGet {
     $AppName = "NuGet"
 
@@ -182,7 +174,6 @@ function Confirm-NuGet {
     }
 }
 
-
 function Confirm-WinGet {
     $AppName = "WinGet.exe"
     $MinVer = '1.3.1251'
@@ -212,7 +203,6 @@ function Confirm-WinGet {
     }
 
 }
-
 
 function Confirm-UIXaml {
     $AppName = "UI.Xaml 2.7"
@@ -281,7 +271,6 @@ function Confirm-UIXaml {
         return $false
     }
 }
-
 function Confirm-VCLibs140 {
     $AppName = "VCLibs"
     # NOTE: The DesktopAppInstaller package has changed its minimum required version which caused this to incorrectly
@@ -490,8 +479,6 @@ function Confirm-DesktopAppInstaller {
 
 ### ---
 
-
-### Check for the 'new' Quick Assist, and if all good, run it!
 if (Confirm-WinGet) {
 
 
@@ -527,16 +514,18 @@ if ((test-path  -path $Path) -eq $true)
 {
     try {
         $originalsetting = "C:\Users\$ENV:USERNAME\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\settings.json"
-        #write-host search file $originalsetting
-        #Write-Host "Create Backup : settings.json to settingsoriginal.json"
-        Copy-Item -LiteralPath $originalsetting -Destination "$Path`Settingsoriginal.json" 
+
+        Write-Host -ForegroundColor DarkCyan  "search file $originalsetting"
+        Write-Host -ForegroundColor DarkGray "Create Backup : settings.json to settingsoriginal.json"
+
+        Copy-Item  $originalsetting -Destination "$Path`Settingsoriginal.json" 
     
     }
     catch {
 
     }
 
-Write-Host "Enable experimental features to Winget"
+Write-Host -ForegroundColor DarkCyan "Enable experimental features to Winget"
 
 $json =@'
 {
@@ -618,6 +607,11 @@ properties:
 $fileyaml | Out-File -FilePath .\osdsetup.yaml -Encoding ascii
 
 winget configure show .\osdsetup.yaml
+
+Start-Sleep -Seconds 2
+
+Write-Host -ForegroundColor DarkCyan "Starting installation of Git, Visual Studio Code, ADK, ADKPE and MDT"
+
 
 winget configure .\osdsetup.yaml ---disable-interactivity --accept-configuration-agreements
 
