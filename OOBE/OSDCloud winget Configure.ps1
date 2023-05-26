@@ -1,3 +1,4 @@
+#Requires -RunAsAdministrator
 Param()
 
 $fileyaml = @'

@@ -1,3 +1,4 @@
+#Requires -Modules @{ ModuleName="OSD"; ModuleVersion="23.5.26.1" }
 #Requires -RunAsAdministrator
 
 #How To: Set the Product Key for Enterprise Volume

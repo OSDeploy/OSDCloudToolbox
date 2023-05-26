@@ -1,8 +1,9 @@
+#Requires -Modules @{ ModuleName="OSD"; ModuleVersion="23.5.26.1" }
 #Requires -RunAsAdministrator
 
 #How To: Remove Appx Provisioned Packages by Match
 
 $RemoveAppx = "CommunicationsApps","OfficeHub","People","Skype","Solitaire","Xbox","ZuneMusic","ZuneVideo"
 foreach ($Item in $RemoveAppx) {
-    Remove-AppxOnline -Name $Item
+    Remove-AppxOnline -Name $Item -Verbose
 }

@@ -1,7 +1,5 @@
 #Requires -RunAsAdministrator
 
-#How To: Update Windows using the PSWindowsUpdate Module
-
 $UpdateWindows = $true
 if (!(Get-Module PSWindowsUpdate -ListAvailable)) {
     try {
