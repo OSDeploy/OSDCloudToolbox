@@ -1,3 +1,4 @@
+#Requires -RunAsAdministrator
 
 <#PSScriptInfo
  
@@ -237,7 +238,7 @@ function Confirm-UIXaml {
         #Find-Package -Name $PkgName
         Write-Host "Installing $AppName NuGet Package ..."
         #Install-Package -Name $PkgName -RequiredVersion $MaxVer -Force | Out-Null
-        Install-Package -Name $PkgName -MinimumVersion $MinVer -MaximumVersion $MaxVer -Force | Out-Null
+        Install-Package -Name $PkgName -MinimumVersion $MinVer -MaximumVersion $MaxVer -Force -Source Nuget | Out-Null
 
         # check our work
         $UIXamlPackage = Get-Package -Name $PkgName -MinimumVersion $MinVer -MaximumVersion $MaxVer -ErrorAction SilentlyContinue | Select-Object -First 1
