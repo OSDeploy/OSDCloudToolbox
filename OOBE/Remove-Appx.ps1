@@ -1,4 +1,5 @@
 #Requires -Modules @{ ModuleName="OSD"; ModuleVersion="23.5.26.1" }
+#Requires -PSEdition Desktop
 #Requires -RunAsAdministrator
 
 #How To: Remove Appx Provisioned Packages by Match

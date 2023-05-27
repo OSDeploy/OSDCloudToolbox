@@ -1,4 +1,5 @@
 #Requires -RunAsAdministrator
+
 Param()
 
 $fileyaml = @'
@@ -61,13 +62,7 @@ properties:
   configurationVersion: 0.2.0 
 '@
 
-# Force using TLS 1.2 connection
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-# Disable the progress bar in Invoke-WebRequest which speeds things up https://github.com/PowerShell/PowerShell/issues/2138
-$ProgressPreference = 'SilentlyContinue'
-
-# Require Elevation
+#region Check for Admin Elevated
 $whoiam = [system.security.principal.windowsidentity]::getcurrent().name
 $isElevated = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
 if ($isElevated) {
@@ -77,9 +72,18 @@ else {
     Write-Warning "Running as $whoiam and is NOT Elevated"
     Break
 }
+#endregion
 
-### ---
-### Functions Insprited from Powershell Script Import-Quickassist.ps1
+#region TLS 1.2 Connection
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+#endregion
+
+#region Disable Progress Bar
+# Disable the progress bar in Invoke-WebRequest which speeds things up https://github.com/PowerShell/PowerShell/issues/2138
+$ProgressPreference = 'SilentlyContinue'
+#endregion
+
+#region Functions
 function Get-InstalledVersion {
     [CmdletBinding()]
     [OutputType([String])]
@@ -506,8 +510,9 @@ function Confirm-DesktopAppInstaller {
         return $false
     }
 }
-### ---
+#endregion
 
+#regoin WinGet
 if (Confirm-WinGet) {
     # Disable UAC Secure Desktop
     $PolicyKeys = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\' -ErrorAction SilentlyContinue
@@ -532,8 +537,8 @@ if (Confirm-WinGet) {
     # I'm not sure how this would behave on a multi-user host like Win10 multi-session...
     # Let's check so we can at least warn because it looks odd...
     # The GetOwner method sometimes fail in OOBE, so we'll 'try' but not break on it.
-
 }
+#endregion
 
 $info = winget show
 $Path = "C:\Users\$env:Username\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
@@ -575,16 +580,17 @@ $fileyaml | Out-File -FilePath .\osdsetup.yaml -Encoding ascii
 winget configure show .\osdsetup.yaml
 
 Start-Sleep -Seconds 2
-write-host ""
+Write-Host ""
 Write-Host -ForegroundColor DarkCyan "Starting installation of Git, Visual Studio Code, ADK, ADKPE and MDT"
-write-host ""
+Write-Host ""
 
 winget configure .\osdsetup.yaml ---disable-interactivity --accept-configuration-agreements
 
 Start-Sleep -Seconds 2
 
-Write-Host -ForegroundColor DarkCyan "Starting Workflow OSDCloud"
-write-host ""
+#region Workflow
+Write-Host -ForegroundColor DarkCyan "Starting OSDCloud Workflow"
+Write-Host ""
 
 New-OSDCloudTemplate 
 New-OSDCloudWorkspace -WorkspacePath C:\OSDCloud
@@ -596,3 +602,4 @@ Write-Host -ForegroundColor DarkCyan "You are ready for OSDCloud"
 else {
     Write-Host "settings.json not found"
 }
+#endregion
