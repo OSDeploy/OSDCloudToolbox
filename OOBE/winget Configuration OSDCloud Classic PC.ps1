@@ -30,12 +30,11 @@ properties:
     - resource: WinGetPackage
       id: 7zip_Package
       directives:
-        description: Install 7-Zip
+        description: Install multiple archiver tools 
         module: Microsoft.WinGet.DSC
         allowPrerelease: true
       settings:
-        id: 7zip.7zip
-        version: '22.01'
+        id: M2Team.NanaZip
         source: winget
         ensure: present
     - resource: WinGetPackage
