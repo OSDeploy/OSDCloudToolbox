@@ -8,13 +8,13 @@ $fileyaml = @'
 properties:
   resources:
     - resource: WinGetPackage
-      id: Git_Package
+      id: AcrobatDC_Package
       directives:
-        description: Install Git for Windows
+        description: Install Acrobat Reader DC 64-bit
         module: Microsoft.WinGet.DSC
         allowPrerelease: true
       settings:
-        id: Git.Git
+        id: Adobe.Acrobat.Reader.64-bit
         source: winget
         ensure: present
     - resource: WinGetPackage
@@ -28,38 +28,45 @@ properties:
         source: winget
         ensure: present
     - resource: WinGetPackage
-      id: ADK_Package
+      id: 7zip_Package
       directives:
-        description: Install Microsoft ADK
+        description: Install 7-Zip
         module: Microsoft.WinGet.DSC
         allowPrerelease: true
       settings:
-        id: Microsoft.WindowsADK
-        version: '10.1.22621.1'
+        id: 7zip.7zip
         source: winget
         ensure: present
     - resource: WinGetPackage
-      id: ADKPE_Package
+      id: GoogleChrome_Package
       directives:
-        description: Install Microsoft ADK winPE addon
+        description: Install Google Chrome
         module: Microsoft.WinGet.DSC
         allowPrerelease: true
       settings:
-        id: Microsoft.ADKPEAddon
-        version: '10.1.22621.1'
+        id: Google.Chrome
         source: winget
         ensure: present
     - resource: WinGetPackage
-      id: MDT_Package
+      id: Firefox_Package
       directives:
-        description: Install Microsoft Deployment Toolkit
+        description: Install Mozilla Firefox
         module: Microsoft.WinGet.DSC
         allowPrerelease: true
       settings:
-        id: Microsoft.DeploymentToolkit
-        version: '6.3.8456.1000'
+        id: Mozilla.Firefox
         source: winget
-        ensure: present  
+        ensure: present
+    - resource: WinGetPackage  
+        id: MicrosoftOfficeM365_Package
+        directives:
+            description: Install Microsoft Office 365 Entreprise Apps 64-bit
+            module: Microsoft.WinGet.DSC
+            allowPrerelease: true
+        settings:
+            id: Microsoft.Office
+            source: winget
+            ensure: present
   configurationVersion: 0.2.0 
 '@
 #endregion

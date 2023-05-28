@@ -1,53 +1,91 @@
 #Requires -RunAsAdministrator
 
-<#PSScriptInfo
- 
-.VERSION 0.1.1
- 
-.GUID 15e9590a-5cf6-491e-93ea-95814d90e317
- 
-.AUTHOR Jérôme Bezet-Torres @JM2K69 https://twitter.com/JM2K69
- 
-.COMPANYNAME 
- 
-.COPYRIGHT
- 
-.TAGS
- 
-.LICENSEURI
- 
-.ICONURI
- 
-.EXTERNALMODULEDEPENDENCIES
- 
-.REQUIREDSCRIPTS
- 
-.EXTERNALSCRIPTDEPENDENCIES
- 
-.RELEASENOTES
-v0.1.0 - 2023may26 initial release 
-v0.1.1 - 2023may26 add some comments and change the name of the script - OSDSetup.ps1
- 
-
-#>
-
 Param()
 
-$ScriptName = "OSDSetup.ps1"
-Write-Host $ScriptName
+#region YamlFile
+$fileyaml = @'
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+properties:
+  resources:
+    - resource: WinGetPackage
+      id: Git_Package
+      directives:
+        description: Install Git for Windows
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Git.Git
+        source: winget
+        ensure: present
+    - resource: WinGetPackage
+      id: vsCode_Package
+      directives:
+        description: Install Visual Studio Code
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.VisualStudioCode
+        source: winget
+        ensure: present
+    - resource: WinGetPackage
+      id: ADK_Package
+      directives:
+        description: Install Microsoft ADK
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.WindowsADK
+        version: '10.1.22621.1'
+        source: winget
+        ensure: present
+    - resource: WinGetPackage
+      id: ADKPE_Package
+      directives:
+        description: Install Microsoft ADK winPE addon
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.ADKPEAddon
+        version: '10.1.22621.1'
+        source: winget
+        ensure: present
+    - resource: WinGetPackage
+      id: MDT_Package
+      directives:
+        description: Install Microsoft Deployment Toolkit
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.DeploymentToolkit
+        version: '6.3.8456.1000'
+        source: winget
+        ensure: present  
+  configurationVersion: 0.2.0 
+'@
+#endregion
 
-# Force using TLS 1.2 connection
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-# Disable the progress bar in Invoke-WebRequest which speeds things up https://github.com/PowerShell/PowerShell/issues/2138
-$ProgressPreference = 'SilentlyContinue'
-
+#region Check for Admin Elevated
 $whoiam = [system.security.principal.windowsidentity]::getcurrent().name
 $isElevated = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
-if ($isElevated) { Write-Output "Running as $whoiam and IS Elevated"; } else { Write-Warning "Running as $whoiam and is NOT Elevated"; }
+if ($isElevated) {
+    Write-Output "Running as $whoiam and IS Elevated"
+}
+else {
+    Write-Warning "Running as $whoiam and is NOT Elevated"
+    Break
+}
+#endregion
 
-### ---
-### Functions Insprited from Powershell Script Inport-Quickassist.ps1
+#region TLS 1.2 Connection
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+#endregion
+
+#region Disable Progress Bar
+# Disable the progress bar in Invoke-WebRequest which speeds things up https://github.com/PowerShell/PowerShell/issues/2138
+$ProgressPreference = 'SilentlyContinue'
+#endregion
+
+#region Functions
 function Get-InstalledVersion {
     [CmdletBinding()]
     [OutputType([String])]
@@ -175,7 +213,6 @@ function Confirm-NuGet {
         }
     }
 }
-
 function Confirm-WinGet {
     $AppName = "WinGet.exe"
     $MinVer = '1.3.1251'
@@ -205,7 +242,6 @@ function Confirm-WinGet {
     }
 
 }
-
 function Confirm-UIXaml {
     $AppName = "UI.Xaml 2.7"
     $PkgName = 'Microsoft.UI.Xaml' # The Appx Package Name on https://www.nuget.org/packages/Microsoft.UI.Xaml/
@@ -329,8 +365,6 @@ function Confirm-VCLibs140 {
         return $false
     }
 }
-
-
 function Confirm-DesktopAppInstaller {
     $AppName = "DesktopAppInstaller"
     $MinVer = '1.18.1251.0'
@@ -383,7 +417,7 @@ function Confirm-DesktopAppInstaller {
     }
 
     $Release = $Releases | Where-Object { $_.prerelease -eq "true" } | Select-Object -First 1
-    #Write-Host "Latest Release of DesktopAppInstaller from GitHub is $($Release.tag_name)"
+    Write-Host "Latest Release of DesktopAppInstaller from GitHub is $($Release.tag_name)"
     # remove any leading non-numeric characters, then any letters or hyphens
     $ReleaseVer = (($Release.tag_name) -replace '^[^0-9]*') -replace '[a-zA-Z\-]'
 
@@ -478,12 +512,10 @@ function Confirm-DesktopAppInstaller {
         return $false
     }
 }
+#endregion
 
-### ---
-
+#regoin WinGet
 if (Confirm-WinGet) {
-
-
     # Disable UAC Secure Desktop
     $PolicyKeys = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\' -ErrorAction SilentlyContinue
     if (-not $PolicyKeys.PromptOnSecureDesktop) {
@@ -507,10 +539,12 @@ if (Confirm-WinGet) {
     # I'm not sure how this would behave on a multi-user host like Win10 multi-session...
     # Let's check so we can at least warn because it looks odd...
     # The GetOwner method sometimes fail in OOBE, so we'll 'try' but not break on it.
-
 }
+#endregion
 
-$info = winget show
+#region Winget Configuration
+
+info = winget show
 $Path = "C:\Users\$env:Username\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
 if ((test-path  -path $Path) -eq $true)
 {
@@ -544,81 +578,24 @@ $json =@'
 }
 '@
 $json | Out-File "$Path\settings.json" -Encoding ascii -Force
-$fileyaml=
-@'
-# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
-properties:
-  resources:
-    - resource: WinGetPackage
-      id: Git_Package
-      directives:
-        description: Install Git for Windows
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Git.Git
-        source: winget
-        ensure: present
-    - resource: WinGetPackage
-      id: vsCode_Package
-      directives:
-        description: Install Visual Studio Code
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Microsoft.VisualStudioCode
-        source: winget
-        ensure: present
-    - resource: WinGetPackage
-      id: ADK_Package
-      directives:
-        description: Install Microsoft ADK
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Microsoft.WindowsADK
-        version: '10.1.22621.1'
-        source: winget
-        ensure: present
-    - resource: WinGetPackage
-      id: ADKPE_Package
-      directives:
-        description: Install Microsoft ADK winPE addon
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Microsoft.ADKPEAddon
-        version: '10.1.22621.1'
-        source: winget
-        ensure: present
-    - resource: WinGetPackage
-      id: MDT_Package
-      directives:
-        description: Install Microsoft Deployment Toolkit
-        module: Microsoft.WinGet.DSC
-        allowPrerelease: true
-      settings:
-        id: Microsoft.DeploymentToolkit
-        version: '6.3.8456.1000'
-        source: winget
-        ensure: present  
-  configurationVersion: 0.2.0 
-'@
+
 $fileyaml | Out-File -FilePath .\osdsetup.yaml -Encoding ascii
 
 winget configure show .\osdsetup.yaml
 
 Start-Sleep -Seconds 2
-write-host ""
+Write-Host ""
 Write-Host -ForegroundColor DarkCyan "Starting installation of Git, Visual Studio Code, ADK, ADKPE and MDT"
-write-host ""
+Write-Host ""
 
 winget configure .\osdsetup.yaml ---disable-interactivity --accept-configuration-agreements
 
+#endregion
 Start-Sleep -Seconds 2
 
-Write-Host -ForegroundColor DarkCyan "Starting Workflow OSDCloud"
-write-host ""
+#region Workflow
+Write-Host -ForegroundColor DarkCyan "Starting OSDCloud Workflow"
+Write-Host ""
 
 New-OSDCloudTemplate 
 New-OSDCloudWorkspace -WorkspacePath C:\OSDCloud
@@ -626,11 +603,8 @@ Edit-OSDCloudWinPE -CloudDriver * -UseDefaultWallpaper
 
 Write-Host -ForegroundColor DarkCyan "You are ready for OSDCloud"
 
-
 }
-else
-{
+else {
     Write-Host "settings.json not found"
 }
-
-
+#endregion
