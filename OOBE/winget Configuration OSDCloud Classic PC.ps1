@@ -57,16 +57,16 @@ properties:
         id: Mozilla.Firefox
         source: winget
         ensure: present
-    - resource: WinGetPackage  
-        id: MicrosoftOfficeM365_Package
-        directives:
-            description: Install Microsoft Office 365 Entreprise Apps 64-bit
-            module: Microsoft.WinGet.DSC
-            allowPrerelease: true
-        settings:
-            id: Microsoft.Office
-            source: winget
-            ensure: present
+    - resource: WinGetPackage
+      id: MicrosofM365_Package
+      directives:
+        description: Install Microsoft Office 365 Entreprise Apps 64-bit
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.Office
+        source: winget
+        ensure: present
   configurationVersion: 0.2.0 
 '@
 #endregion
