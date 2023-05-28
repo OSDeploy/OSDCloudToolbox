@@ -67,6 +67,16 @@ properties:
         id: Microsoft.Office
         source: winget
         ensure: present
+    - resource: WinGetPackage
+      id: PowerToys_Package
+      directives:
+        description: Install Microsoft PowerToys
+        module: Microsoft.WinGet.DSC
+        allowPrerelease: true
+      settings:
+        id: Microsoft.PowerToys
+        source: winget
+        ensure: present
   configurationVersion: 0.2.0 
 '@
 #endregion
