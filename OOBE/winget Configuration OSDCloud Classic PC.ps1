@@ -35,6 +35,7 @@ properties:
         allowPrerelease: true
       settings:
         id: 7zip.7zip
+        version: '22.01'
         source: winget
         ensure: present
     - resource: WinGetPackage
@@ -592,23 +593,13 @@ winget configure show .\osdsetup.yaml
 
 Start-Sleep -Seconds 2
 Write-Host ""
-Write-Host -ForegroundColor DarkCyan "Starting installation of Git, Visual Studio Code, ADK, ADKPE and MDT"
+Write-Host -ForegroundColor DarkCyan "Starting installation of some sowtfare with winget"
 Write-Host ""
 
 winget configure .\osdsetup.yaml ---disable-interactivity --accept-configuration-agreements
 
 #endregion
 Start-Sleep -Seconds 2
-
-#region Workflow
-Write-Host -ForegroundColor DarkCyan "Starting OSDCloud Workflow"
-Write-Host ""
-
-New-OSDCloudTemplate 
-New-OSDCloudWorkspace -WorkspacePath C:\OSDCloud
-Edit-OSDCloudWinPE -CloudDriver * -UseDefaultWallpaper
-
-Write-Host -ForegroundColor DarkCyan "You are ready for OSDCloud"
 
 }
 else {
