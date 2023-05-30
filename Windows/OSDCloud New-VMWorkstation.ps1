@@ -1,4 +1,5 @@
 #Requires -Modules @{ ModuleName="vmxtoolkit"; ModuleVersion="4.5.3.1" }
+#Requires -PSEdition Core
 
 
 
